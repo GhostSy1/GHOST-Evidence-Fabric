@@ -1,6 +1,9 @@
 # GHOST-Evidence-Fabric
 
-[![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)]()
+[![Go](https://img.shields.io/badge/Go-1.21%2B-blue)]()
+[![Rust](https://img.shields.io/badge/Rust-Edition%202021-orange)]()
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **Unified Security Evidence, Asset Intelligence & Explainable Risk Fabric**  
@@ -8,17 +11,19 @@
 
 ---
 
-## Overview
-**GHOST-Evidence-Fabric** is an advanced enterprise security platform designed to unify disparate scanner outputs, enforce tamper-evident chain of custody, and evaluate risk using an explainable mathematical engine.
+## Overview & Purpose
+**GHOST-Evidence-Fabric** is an enterprise-grade, multi-language security platform engineered to solve fragmentation in vulnerability management. It combines a Python **Explainable Risk Engine**, a Go high-performance network prober, a Rust cryptographic integrity verifier, and a TypeScript contract validator.
 
 ---
 
-## Key Features & Architecture
-1. **Explainable Risk Engine**: Evaluates CVSS base scores, exploit availability, authentication requirements, and public internet exposure to generate transparent risk scores.
-2. **Secure Local Vault & Integrity Hashing**: Computes cryptographic `SHA-256` hashes for all ingested files to guarantee data authenticity.
-3. **Immutable Audit Ledger**: Maintains a tamper-evident blockchain-style hash chain for all operational events and evidence ingestions.
-4. **Plugin Architecture**: Modular parser plugins (`plugins/ghost_scanner_plugin.py`) to standardize outputs from various security tools.
-5. **Visual Web UI**: Interactive dark-mode dashboard (`web/index.html`) for asset and finding management.
+## Architecture & Multi-Language Components
+| Component | Language | Purpose |
+|---|---|---|
+| `main.py` | Python | Interactive CLI, banner initialization, orchestration |
+| `engine/risk_engine.py` | Python | Explainable risk scoring model (ERE) |
+| `core/scanner.go` | Go | High-performance concurrent TCP port prober |
+| `core/hasher.rs` | Rust | SHA-256 cryptographic file fingerprinting |
+| `api/validator.ts` | TypeScript | Strict evidentiary schema validation |
 
 ---
 
@@ -26,14 +31,18 @@
 ```bash
 git clone https://github.com/GhostSy1/GHOST-Evidence-Fabric.git
 cd GHOST-Evidence-Fabric
-pip install -r requirements.txt
 
-# Ingest scan report and run risk engine
-python3 main.py --ingest /path/to/scan_report.json
+# Run Python CLI Engine
+python3 main.py --target 159.26.100.226
 
-# Verify immutable audit ledger integrity
-python3 main.py --verify-audit
+# Run Go Prober
+go run core/scanner.go 159.26.100.226
 ```
+
+---
+
+## Integration & API Contracts
+The platform supports modular ingestion plugins (`plugins/`) and tamper-evident audit ledgers (`audit/`). See `docs/` for full API specifications.
 
 ---
 
