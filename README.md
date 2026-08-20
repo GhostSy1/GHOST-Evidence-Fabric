@@ -3,7 +3,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **Unified Security Evidence, Asset Intelligence & Provenance Fabric**  
+> **Unified Security Evidence, Asset Intelligence & Explainable Risk Fabric**  
 > Developed by Abdulaziz (Ghost-SY1).
 
 ---
@@ -13,10 +13,11 @@
 
 ---
 
-## Core Architecture
+## Core Architecture & Features
 - **Evidence Ingestion & Normalization**: Standardizes disparate findings from network scanners, web evaluators, static analyzers, and cloud audits into a unified evidentiary schema.
-- **Provenance & Integrity Ledger**: Tracks the exact source, timestamp, and verification chain of every discovered asset and security finding.
-- **Deduplication & Risk Correlation**: Eliminates duplicate alerts and correlates findings against confirmed operational assets.
+- **Secure Local Vault & Integrity Hashing**: Automatically calculates SHA-256 hashes for all ingested evidence and stores tamper-evident records locally.
+- **Explainable Risk Engine**: Evaluates findings based on CVSS scores, exploit availability, authentication requirements, and internet exposure, providing transparent factor breakdowns rather than opaque numbers.
+- **Visual Web UI**: Modern dark-mode web dashboard (`web/index.html`) for managing assets, evidence ledger, and risk registers.
 - **Audit-Ready Export**: Generates tamper-evident JSON and CSV audit trails suitable for executive presentation and technical validation.
 
 ---
