@@ -6,8 +6,11 @@ import argparse
 import hashlib
 from datetime import datetime
 
+from plugins import ghost_scanner_plugin
+from src.audit_ledger import ImmutableAuditLedger
+
 TOOL_NAME = "GHOST-Evidence-Fabric"
-VERSION = "v2.0-ENTERPRISE"
+VERSION = "v2.5-ENTERPRISE"
 
 def banner():
     if os.name == 'nt':
@@ -82,10 +85,19 @@ def main():
     banner()
     parser = argparse.ArgumentParser(description=f"{TOOL_NAME} - Enterprise Security Evidence & Risk Fabric")
     parser.add_argument("--ingest", help="Path to input assessment findings or tool output JSON")
+    parser.add_argument("--plugin", default="ghost_scanner_plugin", help="Plugin name for parsing custom tool output")
     parser.add_argument("--vault", default="vault/evidence_vault.json", help="Path to secure local vault store")
     parser.add_argument("--json", default="reports/fabric_report.json", help="Export unified JSON report")
     parser.add_argument("--csv", default="reports/fabric_report.csv", help="Export unified CSV report")
+    parser.add_argument("--verify-audit", action="store_true", help="Verify immutable audit ledger integrity")
     args = parser.parse_args()
+
+    ledger = ImmutableAuditLedger()
+
+    if args.verify_audit:
+        valid, msg = ledger.verify_integrity()
+        print(f"\n[+] Audit Ledger Verification: {msg}")
+        return
 
     target = args.ingest
     if not target:
@@ -97,34 +109,12 @@ def main():
     if os.path.exists(target):
         if os.path.isfile(target):
             file_hash = compute_sha256(target)
-            try:
-                with open(target, 'r', encoding='utf-8', errors='ignore') as f:
-                    data = json.load(f)
-                    if isinstance(data, list):
-                        for item in data:
-                            if isinstance(item, dict):
-                                risk = evaluate_risk(item)
-                                item.update(risk)
-                                item["integrity_hash"] = file_hash
-                                item["provenance_source"] = target
-                                findings.append(item)
-                    elif isinstance(data, dict):
-                        risk = evaluate_risk(data)
-                        data.update(risk)
-                        data["integrity_hash"] = file_hash
-                        data["provenance_source"] = target
-                        findings.append(data)
-            except Exception:
-                with open(target, 'r', encoding='utf-8', errors='ignore') as f:
-                    content = f.read()
-                item = {
-                    "source_file": target,
-                    "raw_content_preview": content[:200],
-                    "integrity_hash": file_hash,
-                    "ingestion_timestamp": datetime.utcnow().isoformat(),
-                    "status": "Raw Evidence Ingested"
-                }
-                item.update(evaluate_risk(item))
+            parsed_items = ghost_scanner_plugin.parse_report(target)
+            for item in parsed_items:
+                risk = evaluate_risk(item)
+                item.update(risk)
+                item["integrity_hash"] = file_hash
+                item["provenance_source"] = target
                 findings.append(item)
         else:
             for root, _, files in os.walk(target):
@@ -155,6 +145,14 @@ def main():
         json.dump(findings, vf, indent=4)
     print(f"[+] Secure local vault updated with {len(findings)} records at: {args.vault}")
 
+    # Record event in immutable ledger
+    ledger.record_event(
+        actor="Operator/Ghost-SY1",
+        action="INGEST_EVIDENCE_AND_EVALUATE_RISK",
+        details={"target": target, "records_processed": len(findings), "vault_path": args.vault}
+    )
+    print(f"[+] Event recorded in Immutable Audit Ledger.")
+
     os.makedirs(os.path.dirname(args.json), exist_ok=True)
     with open(args.json, 'w', encoding='utf-8') as jf:
         json.dump(findings, jf, indent=4)
@@ -162,7 +160,7 @@ def main():
 
     with open(args.csv, 'w', newline='', encoding='utf-8') as cf:
         if findings:
-            keys = ["provenance_source", "status", "risk_score", "risk_level", "integrity_hash"]
+            keys = ["provenance_source", "asset", "finding_type", "risk_score", "risk_level", "integrity_hash"]
         else:
             keys = ["target", "status", "risk_score", "risk_level"]
         writer = csv.DictWriter(cf, fieldnames=keys, extrasaction='ignore')

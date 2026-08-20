@@ -9,16 +9,16 @@
 ---
 
 ## Overview
-**GHOST-Evidence-Fabric** is an advanced open-source enterprise platform designed to solve a critical challenge for security teams and penetration testers: **fragmented tool outputs, conflicting findings, and lack of verifiable evidence provenance across multi-vector assessments**.
+**GHOST-Evidence-Fabric** is an advanced enterprise security platform designed to unify disparate scanner outputs, enforce tamper-evident chain of custody, and evaluate risk using an explainable mathematical engine.
 
 ---
 
-## Core Architecture & Features
-- **Evidence Ingestion & Normalization**: Standardizes disparate findings from network scanners, web evaluators, static analyzers, and cloud audits into a unified evidentiary schema.
-- **Secure Local Vault & Integrity Hashing**: Automatically calculates SHA-256 hashes for all ingested evidence and stores tamper-evident records locally.
-- **Explainable Risk Engine**: Evaluates findings based on CVSS scores, exploit availability, authentication requirements, and internet exposure, providing transparent factor breakdowns rather than opaque numbers.
-- **Visual Web UI**: Modern dark-mode web dashboard (`web/index.html`) for managing assets, evidence ledger, and risk registers.
-- **Audit-Ready Export**: Generates tamper-evident JSON and CSV audit trails suitable for executive presentation and technical validation.
+## Key Features & Architecture
+1. **Explainable Risk Engine**: Evaluates CVSS base scores, exploit availability, authentication requirements, and public internet exposure to generate transparent risk scores.
+2. **Secure Local Vault & Integrity Hashing**: Computes cryptographic `SHA-256` hashes for all ingested files to guarantee data authenticity.
+3. **Immutable Audit Ledger**: Maintains a tamper-evident blockchain-style hash chain for all operational events and evidence ingestions.
+4. **Plugin Architecture**: Modular parser plugins (`plugins/ghost_scanner_plugin.py`) to standardize outputs from various security tools.
+5. **Visual Web UI**: Interactive dark-mode dashboard (`web/index.html`) for asset and finding management.
 
 ---
 
@@ -27,7 +27,12 @@
 git clone https://github.com/GhostSy1/GHOST-Evidence-Fabric.git
 cd GHOST-Evidence-Fabric
 pip install -r requirements.txt
-python3 main.py --ingest /path/to/tool_output.json
+
+# Ingest scan report and run risk engine
+python3 main.py --ingest /path/to/scan_report.json
+
+# Verify immutable audit ledger integrity
+python3 main.py --verify-audit
 ```
 
 ---
