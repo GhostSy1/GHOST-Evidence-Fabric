@@ -1,26 +1,34 @@
-# GHOST-Evidence-Fabric - Architecture & System Design
+# GHOST-Evidence-Fabric Architecture Review
 
-> Developed by Abdulaziz (Ghost-SY1).
+## Purpose of this document
 
----
+This document records the repository structure observed during the portfolio review. It is intentionally factual: it describes paths that exist in the checkout and does not imply capabilities that are not implemented.
 
-## 1. System Overview
-This document outlines the architectural flow, component interaction, and evidentiary pipelines for **GHOST-Evidence-Fabric**.
+## Implementation inventory
 
-## 2. Architecture Diagram (Mermaid)
+| Property | Observed value |
+|---|---|
+| Repository | `GHOST-Evidence-Fabric` |
+| Languages | Go, Python, Rust, TypeScript |
+| Source-file count | 8 |
+| Execution policy | Must be confirmed from the source before use |
+| Release boundary | Authorized systems and operator-supplied data only |
 
-```mermaid
-graph TD
-    A[User / CLI Input] -->|Target / Config| B(main.py Orchestrator)
-    B --> C{Core Engine}
-    C -->|Execute Assessment| D[Local Vault & Audit Ledger]
-    D --> E[JSON / CSV Report Generation]
-    E --> F[GitHub CI/CD & Artifacts]
-```
+## Source map
 
-## 3. Data Flow & Security Controls
-- **Input Sanitization**: All targets and payloads are validated against strict formatting rules.
-- **Integrity Verification**: Output telemetry is hashed using SHA-256 to ensure tamper-evidence.
-- **Execution Lifecycle**: Terminal buffers are cleared, official Ghost-SY1 banner is rendered, and execution proceeds under strict authorization.
+- `api/validator.ts`
+- `core/hasher.rs`
+- `core/scanner.go`
+- `engine/risk_engine.py`
+- `main.py`
+- `plugins/ghost_scanner_plugin.py`
+- `src/audit_ledger.py`
+- `tests/test_repository_contract.py`
 
----
+## Review expectations
+
+The command-line entry point, if present, should validate operator input, fail closed on invalid paths, and report observations with their source. Network access, external service calls, and privileged actions should be explicit in the README and should never be hidden behind a default command. A detection result must remain traceable to evidence rather than a hardcoded example.
+
+## Change boundary
+
+A change should update the relevant source module, tests, CLI reference, and changelog entry. A public release must not contain credentials, private keys, customer data, raw engagement artifacts, or undocumented access mechanisms.
